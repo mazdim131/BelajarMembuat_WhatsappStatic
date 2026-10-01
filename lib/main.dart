@@ -47,10 +47,7 @@ class _HomePageState extends State<HomePage> {
         body: TabBarView(
           children: [
             ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 8.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               children: const [
                 Card(
                   child: ListTile(
