@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Menghilangkan banner debug
       home: HomePage(),
     );
   }
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 InkWell(
                   onTap: () {
-                    print("Chat Ditekan!");
+                    // print("Chat Ditekan!");
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => DetailChat()),
