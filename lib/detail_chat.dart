@@ -45,6 +45,12 @@ class _DetailChatState extends State<DetailChat> {
   }
 
   @override
+  void dispose() { // fungsi yang mencegah aplikasi berat, kalau misalkan ada 5 controller berarti buat jadi 5 dispose menyesuaikan jumlah controller
+    textPesan.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
