@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-class DetailChat extends StatefulWidget {
+// membuat model pesan
+class Message {
+  final String chat;
+  final bool isMe; // kenapa bool karena terdapat 2 kondisi antara chat kita dan tidak
+
+  Message({required this.chat, required this.isMe});
+}
+
+class DetailChat extends StatefulWidget { // ditampung pakai stateful karena kalau stateles yang set state tidak bisa berjalan
   const DetailChat({super.key});
 
   @override
@@ -8,6 +16,34 @@ class DetailChat extends StatefulWidget {
 }
 
 class _DetailChatState extends State<DetailChat> {
+  // tambahkan controller
+  TextEditingController textPesan = TextEditingController(); // kalau mau buat sebuat input an berfungsi sertakan controller ini
+
+  final List<Message> pesan = [ // isi pesan
+    Message(chat: 'Hi! Belajar sore', isMe: true), // pesan dari diri sendiri karena isMe nya true dan posisi di kanan
+    Message(chat: 'Iyaa...', isMe: false), // pesan posisi di kiri karena isMe false
+  ];
+
+
+  // membaut fungsi tombol kirim
+  void kirimPesan() {
+    if (textPesan.text.trim().isEmpty) return; // validasi pesan kosong
+
+    setState(() { // ubah tampilan
+      pesan.add(Message(chat: textPesan.text, isMe: true)); // chat ambil dari controller
+    });
+
+    textPesan.clear(); // kalau misalkan udh terkirim pesannya hapus tulisan yang di inputan
+
+    Future.delayed(const Duration(seconds: 4), () { // tambah future untuk menambah fitur balas chat yang bisa diatur kecepatnnya didalam parameter Duration
+      if (mounted) {
+        setState(() {
+          pesan.add(Message(chat: 'Okee siap!', isMe: false));
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,62 +91,28 @@ class _DetailChatState extends State<DetailChat> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(20),
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5), // atas bawah
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text("Hi!"),
-                  ),
-                ),
+            child: ListView.builder( // listview builder ini peruntukan untuk data dinamis
+              itemCount: pesan.length, // jumlah isi dari list
+              itemBuilder: (context, index) { // yang nantinya diisi oleh widget apa yang ingin ditampilkan
 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5), // atas bawah
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text("Hi juga! Bagaimana belajar flutter?"),
-                  ),
-                ),
+                final psn = pesan[index];
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5), // atas bawah
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text("Mudah, cuman widget2 aja nih"),
-                  ),
-                ),
+                return Align(
+                  alignment: psn.isMe ? Alignment.centerRight : Alignment.centerLeft, // untuk posisi pesan
 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
+                  child: Container( // isi pesan
                     margin: EdgeInsets.symmetric(vertical: 5), // atas bawah
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.green[50],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text("Sudah paham berapa widget? wkwkwk"),
+                    child: Text(psn.chat), // ambil chat
                   ),
-                ),
-              ],
-            ),
+                );
+
+              }
+            )
           ),
 
           Padding(
@@ -119,6 +121,8 @@ class _DetailChatState extends State<DetailChat> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: textPesan, // tambah controller karena kalau enggak dia gak bakal dipanggil ke tampilan
+
                     decoration: InputDecoration(
                       hintText: "Tulis pesan...",
                       border: OutlineInputBorder(
@@ -131,7 +135,8 @@ class _DetailChatState extends State<DetailChat> {
 
                 IconButton(
                   onPressed: () {
-                    debugPrint("Mengirim pesan!");
+                    // debugPrint("Mengirim pesan!");
+                    kirimPesan();
                   }, 
                   icon: Icon(Icons.send)
                 ),
